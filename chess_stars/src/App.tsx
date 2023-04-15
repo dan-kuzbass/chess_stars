@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
-import {Chessboard} from "react-chessboard";
+import {Chessboard} from 'react-chessboard';
 import { Chess } from 'chess.js'
 
 import logo from './logo.svg';
 import './App.css';
 
-function App() {
+const App = () => {
     const chess = new Chess()
 
       return (
