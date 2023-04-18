@@ -32,7 +32,7 @@ module.exports = {
           MethodDefinition: false,
           ClassDeclaration: true,
           ArrowFunctionExpression: false,
-          FunctionExpression: true,
+          FunctionExpression: false,
         },
       },
     ],
