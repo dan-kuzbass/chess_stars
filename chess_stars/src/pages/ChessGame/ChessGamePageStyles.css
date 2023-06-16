@@ -1,0 +1,17 @@
+.Container {
+    flex-direction: column;
+    background-image: url(/src/assets/img/cosmos.jpeg);
+    background-repeat: repeat;
+    display: flex;
+    min-height: 100vh;
+    height: auto;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+}
+
+.ChessBoardContainer {
+    min-height: 50vmin;
+    max-height: 80vmin;
+    width: 80vmin;
+}
