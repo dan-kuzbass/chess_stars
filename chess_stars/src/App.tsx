@@ -2,7 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { Chessboard } from 'react-chessboard'
 import { Chess } from 'chess.js'
 import './App.css'
-import {BoardOrientation, Piece, Square} from 'react-chessboard/dist/chessboard/types'
+import {
+  BoardOrientation,
+  Piece,
+  Square,
+} from 'react-chessboard/dist/chessboard/types'
 
 const App = () => {
   const [game, setGame] = useState<Chess>(new Chess())
@@ -24,7 +28,7 @@ const App = () => {
 
       // Неверный ход
       if (move === null) return false
-      setColor((prevState) => prevState === 'black' ? 'white' : 'black')
+      setColor((prevState) => (prevState === 'black' ? 'white' : 'black'))
       return true
     } catch (e) {
       console.error(e)
@@ -34,7 +38,14 @@ const App = () => {
 
   return (
     <div className="App">
-      <Chessboard id="BasicBoard" position={game.fen()} boardWidth={500} boardOrientation={color} onPieceDrop={onPieceDrop} />
+      <div className="Container">
+        <Chessboard
+          id="BasicBoard"
+          position={game.fen()}
+          boardOrientation={color}
+          onPieceDrop={onPieceDrop}
+        />
+      </div>
     </div>
   )
 }
