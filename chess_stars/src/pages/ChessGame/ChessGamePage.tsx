@@ -2,34 +2,27 @@ import React, { useState } from 'react'
 import { Chessboard } from 'react-chessboard'
 import { Chess } from 'chess.js'
 import './ChessGamePageStyles.css'
-import {
-  BoardOrientation,
-  Piece,
-  Square,
-} from 'react-chessboard/dist/chessboard/types'
+import { Square } from 'react-chessboard/dist/chessboard/types'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '../../store'
+import { changeFen } from '../../store/slices/game'
 
 const ChessGamePage = () => {
-  const [game, setGame] = useState<Chess>(new Chess())
-  const [color, setColor] = useState<BoardOrientation>('white')
+  const fen = useSelector((state: RootState) => state.game.fen)
+  const dispatch = useDispatch()
 
-  const onPieceDrop = (
-    sourceSquare: Square,
-    targetSquare: Square,
-    piece: Piece,
-  ) => {
+  const onPieceDrop = (sourceSquare: Square, targetSquare: Square) => {
     try {
-      const gameCopy: Chess = Object.create(game)
+      const gameCopy: Chess = Object.create(fen)
       const move = gameCopy.move({
         from: sourceSquare,
         to: targetSquare,
         promotion: 'q', // always promote to a queen for example simplicity
       })
-      setGame(gameCopy)
+      dispatch(changeFen(gameCopy))
 
       // Неверный ход
-      if (move === null) return false
-      setColor((prevState) => (prevState === 'black' ? 'white' : 'black'))
-      return true
+      return move !== null
     } catch (e) {
       console.error(e)
       return false
@@ -41,8 +34,7 @@ const ChessGamePage = () => {
       <div className="ChessBoardContainer">
         <Chessboard
           id="BasicBoard"
-          position={game.fen()}
-          boardOrientation={color}
+          position={fen.fen()}
           onPieceDrop={onPieceDrop}
         />
       </div>

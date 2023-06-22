@@ -1,11 +1,23 @@
 import React from 'react'
 import './App.css'
-import ChessGamePage from './pages/ChessGame';
+import {createBrowserRouter, Link, RouterProvider} from 'react-router-dom'
+import ChessGamePage from './pages/ChessGame'
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <div><Link to={`/chessboard`}>Открой шахматную доску</Link></div>,
+  },
+  {
+    path: '/chessboard',
+    element: <ChessGamePage />,
+  },
+])
 
 const App = () => {
   return (
     <div className="App">
-      <ChessGamePage />
+      <RouterProvider router={router} />
     </div>
   )
 }
