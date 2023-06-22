@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Chessboard } from 'react-chessboard'
 import { Chess } from 'chess.js'
 import './ChessGamePageStyles.css'
