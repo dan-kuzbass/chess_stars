@@ -1,7 +1,6 @@
 .Container {
     flex-direction: column;
-    background-image: url(/src/assets/img/cosmos.jpeg);
-    background-repeat: repeat;
+    background-color: black;
     display: flex;
     min-height: 100vh;
     height: auto;
