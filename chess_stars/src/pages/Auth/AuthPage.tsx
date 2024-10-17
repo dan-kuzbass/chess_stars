@@ -10,13 +10,13 @@ import {
   MDBIcon,
   MDBInput,
 } from 'mdb-react-ui-kit'
+
 import { useNavigate } from 'react-router-dom'
 
 const AuthPage = () => {
   const navigate = useNavigate()
 
   const handleClick = () => {
-    console.log('fdfd')
     navigate('/chessboard')
   }
 
@@ -65,7 +65,13 @@ const AuthPage = () => {
                 size="lg"
               />
 
-              <MDBBtn className="mb-4 px-5" color="dark" size="lg" onClick={handleClick} rounded>
+              <MDBBtn
+                className="mb-4 px-5"
+                color="dark"
+                size="lg"
+                onClick={handleClick}
+                rounded
+              >
                 Login
               </MDBBtn>
               <a className="small text-muted" href="#!">
