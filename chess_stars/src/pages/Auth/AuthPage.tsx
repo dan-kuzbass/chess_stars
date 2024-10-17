@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   MDBBtn,
   MDBContainer,
@@ -9,15 +9,33 @@ import {
   MDBCol,
   MDBIcon,
   MDBInput,
+  MDBSpinner,
 } from 'mdb-react-ui-kit'
 
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 const AuthPage = () => {
+  const [isLoad, setIsLoad] = useState(false)
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+
   const navigate = useNavigate()
 
   const handleClick = () => {
-    navigate('/chessboard')
+    setIsLoad(true)
+    axios
+      .post('http://localhost:3001/auth/login', { username, password })
+      .then((res) => {
+        console.log('fdfd res', res)
+        navigate('/chessboard')
+      })
+      .catch((e) => {
+        console.error(e)
+      })
+      .finally(() => {
+        setIsLoad(false)
+      })
   }
 
   return (
@@ -56,6 +74,10 @@ const AuthPage = () => {
                 id="formControlLg"
                 type="email"
                 size="lg"
+                value={username}
+                onChange={(event) => {
+                  setUsername(event.target.value)
+                }}
               />
               <MDBInput
                 wrapperClass="mb-4"
@@ -63,17 +85,26 @@ const AuthPage = () => {
                 id="formControlLg"
                 type="password"
                 size="lg"
+                value={password}
+                onChange={(event) => {
+                  setPassword(event.target.value)
+                }}
               />
 
-              <MDBBtn
-                className="mb-4 px-5"
-                color="dark"
-                size="lg"
-                onClick={handleClick}
-                rounded
-              >
-                Login
-              </MDBBtn>
+              {isLoad ? (
+                <MDBSpinner className="mb-4" style={{ alignSelf: 'center' }} />
+              ) : (
+                <MDBBtn
+                  className="mb-4 px-5"
+                  color="dark"
+                  size="lg"
+                  onClick={handleClick}
+                  rounded
+                  style={{ height: 46, marginBottom: 0 }}
+                >
+                  Login
+                </MDBBtn>
+              )}
               <a className="small text-muted" href="#!">
                 Forgot password?
               </a>
