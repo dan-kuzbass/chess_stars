@@ -105,7 +105,7 @@ const AuthPage = () => {
                   Login
                 </MDBBtn>
               )}
-              <a className="small text-muted" href="#!">
+              {/* <a className="small text-muted" href="#!">
                 Forgot password?
               </a>
               <p className="mb-5 pb-lg-2" style={{ color: '#393f81' }}>
@@ -122,7 +122,7 @@ const AuthPage = () => {
                 <a href="#!" className="small text-muted">
                   Privacy policy
                 </a>
-              </div>
+              </div> */}
             </MDBCardBody>
           </MDBCol>
         </MDBRow>

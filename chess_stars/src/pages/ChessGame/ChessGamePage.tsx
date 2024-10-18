@@ -5,7 +5,7 @@ import './ChessGamePageStyles.css'
 import { Square } from 'react-chessboard/dist/chessboard/types'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../store'
-import { changeFen } from '../../store/slices/game'
+import { changeFen, resetGameStore } from '../../store/slices/game'
 import { MDBBtn } from 'mdb-react-ui-kit'
 import { useNavigate } from 'react-router-dom'
 
@@ -43,6 +43,7 @@ const ChessGamePage = () => {
   }
 
   const handleLogout = () => {
+    dispatch(resetGameStore())
     navigate('/')
   }
 
