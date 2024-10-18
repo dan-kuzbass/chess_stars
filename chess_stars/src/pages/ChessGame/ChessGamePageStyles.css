@@ -14,3 +14,12 @@
     max-height: 80vmin;
     width: 80vmin;
 }
+
+.ButtonsRow {
+    display: flex;
+    gap: 50px;
+}
+
+.LogoutButton {
+    background-color: #900020;
+}

@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom'
 const ChessGamePage = () => {
   const fen = useSelector((state: RootState) => state.game.fen)
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const onPieceDrop = (sourceSquare: Square, targetSquare: Square) => {
     try {
@@ -30,7 +31,16 @@ const ChessGamePage = () => {
       return false
     }
   }
-  const navigate = useNavigate()
+
+  const handleMoveBack = () => {
+    const gameCopy: Chess = Object.create(fen)
+    gameCopy.undo()
+    dispatch(changeFen(gameCopy))
+  }
+
+  const handleRestart = () => {
+    dispatch(changeFen(new Chess()))
+  }
 
   const handleLogout = () => {
     navigate('/')
@@ -38,15 +48,35 @@ const ChessGamePage = () => {
 
   return (
     <div className="Container">
-      <MDBBtn
-        className="mb-4 px-5"
-        color="dark"
-        size="lg"
-        onClick={handleLogout}
-        rounded
-      >
-        Logout
-      </MDBBtn>
+      <div className="ButtonsRow">
+        <MDBBtn
+          className="mb-4 px-5"
+          color="dark"
+          size="lg"
+          onClick={handleMoveBack}
+          rounded
+        >
+          Move back
+        </MDBBtn>
+        <MDBBtn
+          className="mb-4 px-5"
+          color="dark"
+          size="lg"
+          onClick={handleRestart}
+          rounded
+        >
+          Restart
+        </MDBBtn>
+        <MDBBtn
+          className="mb-4 px-5 LogoutButton"
+          color="dark"
+          size="lg"
+          onClick={handleLogout}
+          rounded
+        >
+          Logout
+        </MDBBtn>
+      </div>
       <div className="ChessBoardContainer">
         <Chessboard
           id="BasicBoard"
