@@ -4,130 +4,250 @@ import {
   MDBContainer,
   MDBCard,
   MDBCardBody,
-  MDBCardImage,
   MDBRow,
   MDBCol,
   MDBIcon,
   MDBInput,
   MDBSpinner,
 } from 'mdb-react-ui-kit'
-
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import Api from '../../shared/api'
+import './AuthPageStyles.css'
 
 const AuthPage = () => {
   const [isLoad, setIsLoad] = useState(false)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [role, setRole] = useState('student')
+  const [error, setError] = useState('')
 
   const navigate = useNavigate()
 
-  const handleClick = () => {
+  const handleClick = async () => {
+    if (!username.trim() || !password.trim()) {
+      setError('Please fill in all fields')
+      return
+    }
+
     setIsLoad(true)
-    axios
-      .post('http://localhost:3001/auth/login', { username, password })
-      .then((res) => {
-        console.log('fdfd res', res)
-        navigate('/chessboard')
+    setError('')
+
+    try {
+      const res = await Api.callAction({
+        config: {
+          url: 'auth/login',
+          method: 'POST',
+          data: { username, password, role },
+        },
       })
-      .catch((e) => {
-        console.error(e)
-      })
-      .finally(() => {
-        setIsLoad(false)
-      })
+
+      localStorage.setItem('token', res?.data?.access_token)
+      localStorage.setItem('accessToken', res?.data?.access_token)
+      localStorage.setItem('userRole', res?.data?.user?.role)
+      localStorage.setItem('userId', res?.data?.user?.id)
+
+      // Navigate based on role
+      if (res?.data?.user?.role === 'trainer') {
+        navigate('/trainer-dashboard')
+      } else {
+        navigate('/student-profile')
+      }
+    } catch (e: any) {
+      console.error(e)
+      setError(e?.response?.data?.message || 'Login failed. Please try again.')
+    } finally {
+      setIsLoad(false)
+    }
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleClick()
+    }
   }
 
   return (
-    <MDBContainer className="my-5">
-      <MDBCard>
-        <MDBRow className="g-0">
-          <MDBCol md="6">
-            <MDBCardImage
-              src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/img1.webp"
-              alt="login form"
-              className="rounded-start w-100"
-            />
-          </MDBCol>
+    <div className="auth-page">
+      <div className="auth-background">
+        <div className="chess-pattern"></div>
+      </div>
 
-          <MDBCol md="6">
-            <MDBCardBody className="d-flex flex-column">
-              <div className="d-flex flex-row mt-2">
-                <MDBIcon
-                  fas
-                  icon="chess fa-3x me-3"
-                  style={{ color: '#ff6219' }}
-                />
-                <span className="h1 fw-bold mb-0">Chess stars</span>
-              </div>
+      <MDBContainer className="auth-container">
+        <MDBRow className="justify-content-center align-items-center min-vh-100">
+          <MDBCol lg="10" xl="8">
+            <MDBCard className="auth-card">
+              <MDBRow className="g-0">
+                <MDBCol md="6" className="auth-image-section">
+                  <div className="auth-image-content">
+                    <div className="brand-section">
+                      <MDBIcon fas icon="chess-knight" className="brand-icon" />
+                      <h1 className="brand-title">Chess Stars</h1>
+                      <p className="brand-subtitle">
+                        Master the art of chess with professional training
+                      </p>
+                    </div>
 
-              <h5
-                className="fw-normal my-4 pb-3"
-                style={{ letterSpacing: '1px' }}
-              >
-                Sign into your account
-              </h5>
+                    <div className="features-list">
+                      <div className="feature-item">
+                        <MDBIcon
+                          fas
+                          icon="graduation-cap"
+                          className="feature-icon"
+                        />
+                        <span>Learn from expert coaches</span>
+                      </div>
+                      <div className="feature-item">
+                        <MDBIcon fas icon="users" className="feature-icon" />
+                        <span>Interactive training sessions</span>
+                      </div>
+                      <div className="feature-item">
+                        <MDBIcon
+                          fas
+                          icon="chart-line"
+                          className="feature-icon"
+                        />
+                        <span>Track your progress</span>
+                      </div>
+                      <div className="feature-item">
+                        <MDBIcon fas icon="trophy" className="feature-icon" />
+                        <span>Compete and improve</span>
+                      </div>
+                    </div>
+                  </div>
+                </MDBCol>
 
-              <MDBInput
-                wrapperClass="mb-4"
-                label="Email address"
-                id="formControlLg"
-                type="email"
-                size="lg"
-                value={username}
-                onChange={(event) => {
-                  setUsername(event.target.value)
-                }}
-              />
-              <MDBInput
-                wrapperClass="mb-4"
-                label="Password"
-                id="formControlLg"
-                type="password"
-                size="lg"
-                value={password}
-                onChange={(event) => {
-                  setPassword(event.target.value)
-                }}
-              />
+                <MDBCol md="6">
+                  <MDBCardBody className="auth-form-section">
+                    <div className="form-header">
+                      <h2 className="form-title">Welcome Back</h2>
+                      <p className="form-subtitle">
+                        Sign in to continue your chess journey
+                      </p>
+                    </div>
 
-              {isLoad ? (
-                <MDBSpinner className="mb-4" style={{ alignSelf: 'center' }} />
-              ) : (
-                <MDBBtn
-                  className="mb-4 px-5"
-                  color="dark"
-                  size="lg"
-                  onClick={handleClick}
-                  rounded
-                  style={{ height: 46, marginBottom: 0 }}
-                >
-                  Login
-                </MDBBtn>
-              )}
-              {/* <a className="small text-muted" href="#!">
-                Forgot password?
-              </a>
-              <p className="mb-5 pb-lg-2" style={{ color: '#393f81' }}>
-                Don't have an account?{' '}
-                <a href="#!" style={{ color: '#393f81' }}>
-                  Register here
-                </a>
-              </p>
+                    <form
+                      className="auth-form"
+                      onSubmit={(e) => e.preventDefault()}
+                    >
+                      {error && (
+                        <div className="error-message">
+                          <MDBIcon
+                            fas
+                            icon="exclamation-triangle"
+                            className="me-2"
+                          />
+                          {error}
+                        </div>
+                      )}
 
-              <div className="d-flex flex-row justify-content-start">
-                <a href="#!" className="small text-muted me-1">
-                  Terms of use.
-                </a>
-                <a href="#!" className="small text-muted">
-                  Privacy policy
-                </a>
-              </div> */}
-            </MDBCardBody>
+                      <div className="form-group">
+                        <MDBInput
+                          label="Username or Email"
+                          id="username"
+                          type="text"
+                          size="lg"
+                          value={username}
+                          onChange={(event) => setUsername(event.target.value)}
+                          onKeyPress={handleKeyPress}
+                          className="form-input"
+                          disabled={isLoad}
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <MDBInput
+                          label="Password"
+                          id="password"
+                          type="password"
+                          size="lg"
+                          value={password}
+                          onChange={(event) => setPassword(event.target.value)}
+                          onKeyPress={handleKeyPress}
+                          className="form-input"
+                          disabled={isLoad}
+                        />
+                      </div>
+
+                      <div className="form-group">
+                        <label className="form-label">Role</label>
+                        <div className="role-selection">
+                          <div className="role-option">
+                            <input
+                              type="radio"
+                              id="student"
+                              name="role"
+                              value="student"
+                              checked={role === 'student'}
+                              onChange={(e) => setRole(e.target.value)}
+                              disabled={isLoad}
+                            />
+                            <label htmlFor="student" className="role-label">
+                              <MDBIcon
+                                fas
+                                icon="user-graduate"
+                                className="me-2"
+                              />
+                              Student
+                            </label>
+                          </div>
+                          <div className="role-option">
+                            <input
+                              type="radio"
+                              id="trainer"
+                              name="role"
+                              value="trainer"
+                              checked={role === 'trainer'}
+                              onChange={(e) => setRole(e.target.value)}
+                              disabled={isLoad}
+                            />
+                            <label htmlFor="trainer" className="role-label">
+                              <MDBIcon
+                                fas
+                                icon="chalkboard-teacher"
+                                className="me-2"
+                              />
+                              Trainer
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="form-actions">
+                        {isLoad ? (
+                          <div className="loading-container">
+                            <MDBSpinner className="custom-spinner" />
+                            <span className="loading-text">Signing in...</span>
+                          </div>
+                        ) : (
+                          <MDBBtn
+                            className="login-btn"
+                            size="lg"
+                            onClick={handleClick}
+                            disabled={!username.trim() || !password.trim()}
+                          >
+                            <MDBIcon fas icon="sign-in-alt" className="me-2" />
+                            Sign In
+                          </MDBBtn>
+                        )}
+                      </div>
+
+                      <div className="form-footer">
+                        <p className="signup-text">
+                          New to Chess Stars?{' '}
+                          <a href="#!" className="signup-link">
+                            Contact your coach to get started
+                          </a>
+                        </p>
+                      </div>
+                    </form>
+                  </MDBCardBody>
+                </MDBCol>
+              </MDBRow>
+            </MDBCard>
           </MDBCol>
         </MDBRow>
-      </MDBCard>
-    </MDBContainer>
+      </MDBContainer>
+    </div>
   )
 }
 

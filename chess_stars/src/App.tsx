@@ -1,27 +1,19 @@
 import React from 'react'
 import './App.css'
-import 'mdb-react-ui-kit/dist/css/mdb.min.css';
-import '@fortawesome/fontawesome-free/css/all.min.css';
+import 'mdb-react-ui-kit/dist/css/mdb.min.css'
+import '@fortawesome/fontawesome-free/css/all.min.css'
 
-import {createBrowserRouter, Link, RouterProvider} from 'react-router-dom'
-import ChessGamePage from './pages/ChessGame'
-import AuthPage from './pages/Auth';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import Navigator from './shared/router'
 
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <AuthPage />,
-  },
-  {
-    path: '/chessboard',
-    element: <ChessGamePage />,
-  },
-])
+const queryClient = new QueryClient()
 
 const App = () => {
   return (
     <div className="App">
-      <RouterProvider router={router} />
+      <QueryClientProvider client={queryClient}>
+        <Navigator />
+      </QueryClientProvider>
     </div>
   )
 }

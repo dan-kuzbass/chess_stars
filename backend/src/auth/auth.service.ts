@@ -2,6 +2,7 @@ import { Injectable, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { UsersService } from '../users/users.service';
+import { UserRole } from '../users/user.entity';
 
 const bcrypt = require('bcrypt');
 
@@ -12,12 +13,32 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(username: string, pass: string): Promise<any> {
+  async signIn(username: string, pass: string, role?: UserRole): Promise<any> {
     const user = await this.usersService.findOne(username);
     if (!user) {
-      this.usersService.createUser(username, pass);
+      console.log(
+        'Creating new user:',
+        username,
+        'with role:',
+        role || UserRole.STUDENT,
+      );
+      const newUser = await this.usersService.createUser(
+        username,
+        pass,
+        role || UserRole.STUDENT,
+      );
+      const payload = {
+        username: newUser.username,
+        userId: newUser.id,
+        role: newUser.role,
+      };
       return {
-        access_token: await this.jwtService.signAsync({ username }),
+        access_token: await this.jwtService.signAsync(payload),
+        user: {
+          id: newUser.id,
+          username: newUser.username,
+          role: newUser.role,
+        },
       };
     }
     try {
@@ -25,9 +46,18 @@ export class AuthService {
       if (!isValidPassword) {
         throw new BadRequestException('Неверный пароль');
       }
-      const payload = { username: user.username };
+      const payload = {
+        username: user.username,
+        userId: user.id,
+        role: user.role,
+      };
       return {
         access_token: await this.jwtService.signAsync(payload),
+        user: {
+          id: user.id,
+          username: user.username,
+          role: user.role,
+        },
       };
     } catch (e) {
       console.error(e);
